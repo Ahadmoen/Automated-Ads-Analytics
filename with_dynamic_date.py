@@ -1,3 +1,4 @@
+!pip install facebook-business pyarrow aiohttp google-cloud-bigquery
 import os
 import time
 import asyncio
@@ -30,8 +31,8 @@ FACEBOOK_APP_ID       = "YOUR_META_APP_ID"
 FACEBOOK_APP_SECRET   = "REMOVED"
 FACEBOOK_ACCESS_TOKEN = "REMOVED"
 AD_ACCOUNTS = [
-    "AD_ACCOUNT_ID_2",
-    "AD_ACCOUNT_ID_3",
+    "12948---995",
+    "16317---072727",
 ]
 
 RAW_DIR = "./data/raw/"
@@ -46,18 +47,18 @@ BQ_TABLE   = "Facebook_Ads"
 # =============================================
 SERVICE_ACCOUNT_INFO = {
     "type": "service_account",
-    "project_id": "your-gcp-project",
+    "project_id": "gro--uben",
     "private_key_id": "REMOVED",
     "private_key": (
         "REMOVED_PRIVATE_KEY"
     ),
     "client_email": "REMOVED",
     "client_id": "REMOVED",
-    "auth_uri": "https://accounts.google.com/o/oauth2/auth",
-    "token_uri": "https://oauth2.googleapis.com/token",
-    "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
-    "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/your-gcp-project-facebook%40your-gcp-project.iam.gserviceaccount.com",
-    "universe_domain": "googleapis.com",
+    "auth_uri": "https://accou---h2/auth",
+    "token_uri": "https://--h2.g----is.com/token",
+    "auth_provider_x509_cert_url": "https://ww--uth2/v1/certs",
+    "client_x509_cert_url": "https://www.googleapis.com/robot/v----n.iam.gserviceaccount.com",
+    "universe_domain": "--com",
 }
 
 MAX_WORKERS      = 2
@@ -148,7 +149,7 @@ def process_row(raw: Dict, acc_id: str) -> Dict:
         ["omni_add_to_cart", "add_to_cart"]
     )
 
-    link_clicks       = safe_float(raw.get("inline_link_clicks", 0))
+    link_clicks       = round(safe_float(raw.get("inline_link_clicks", 0)), 2)  
     three_sec_views   = get_action_value(actions, "video_view")
     video_100_percent = get_action_value(video_100, "video_p100_watched")
 
@@ -160,14 +161,14 @@ def process_row(raw: Dict, acc_id: str) -> Dict:
         "Ad_Name": str(raw.get("ad_name", "")),
         "Adset_ID": str(raw.get("adset_id", "")),
         "Adset_Name": str(raw.get("adset_name", "")),
-        "Clicks_all": str(safe_float(raw.get("clicks"))),
-        "Link_Clicks": str(link_clicks),
-        "amount_spent": str(safe_float(raw.get("spend"))),
-        "Impressions": str(safe_float(raw.get("impressions"))),
+        "Clicks_all":   str(round(safe_float(raw.get("clicks")), 2)),          
+        "Link_Clicks":  str(link_clicks),                                        
+        "amount_spent": str(round(safe_float(raw.get("spend")), 2)),            
+        "Impressions":  str(round(safe_float(raw.get("impressions")), 2)),      
         "Video_plays": str(sum(int(a.get("value",0)) for a in video_play if a.get("action_type")=="video_view")),
         "Video_plays_at_100_percent": str(video_100_percent),
         "Three_second_video_plays": str(three_sec_views),
-        "Video_average_play_time": str(sum(float(a.get("value",0)) for a in video_avg)/1000.0) if video_avg else "0",
+        "Video_average_play_time": str(round(sum(float(a.get("value",0)) for a in video_avg) / 1000.0, 2)) if video_avg else "0",  
         "Purchases": str(purchases),
         "Purchases_conversion_value": str(purchase_revenue),
         "Initiated_Checkout": str(initiated_checkout),
@@ -333,9 +334,8 @@ def run_one_account(acc_id: str, start: str, end: str):
 
 def main():
     yesterday = (datetime.utcnow() - timedelta(days=1)).strftime("%Y-%m-%d")
-    START = yesterday
-    END   = yesterday
-
+    START = '2026-03-22'
+    END   = '2026-03-22'
 
     paths = []
     with ThreadPoolExecutor(max_workers=MAX_WORKERS) as ex:
