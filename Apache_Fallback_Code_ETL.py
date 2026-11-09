@@ -26,13 +26,11 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-# Your credentials (keep safe!)
-FACEBOOK_APP_ID      = "#####"
-FACEBOOK_APP_SECRET  = "####"
-FACEBOOK_ACCESS_TOKEN = "######"
-AD_ACCOUNTS = ["122333"#,
-              # "128574766"
-               ]
+# Credentials come from environment variables (see .env.example), never from the code
+FACEBOOK_APP_ID       = os.environ["FACEBOOK_APP_ID"]
+FACEBOOK_APP_SECRET   = os.environ["FACEBOOK_APP_SECRET"]
+FACEBOOK_ACCESS_TOKEN = os.environ["FACEBOOK_ACCESS_TOKEN"]
+AD_ACCOUNTS = os.environ["FACEBOOK_AD_ACCOUNTS"].split(",")  # comma-separated ad account IDs
 
 RAW_DIR = "./data/raw/"
 os.makedirs(RAW_DIR, exist_ok=True)
@@ -40,7 +38,7 @@ os.makedirs(RAW_DIR, exist_ok=True)
 BQ_PROJECT   = "A"
 BQ_DATASET   = "B"
 BQ_TABLE     = "C"
-SERVICE_JSON = "/content/sample_data/A-476112-########.json"
+SERVICE_JSON = os.environ["GOOGLE_APPLICATION_CREDENTIALS"]
 
 MAX_WORKERS = 2
 CREATIVE_WORKERS = 30
